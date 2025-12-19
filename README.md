@@ -1,24 +1,24 @@
-# Heading 1**MediSense: Smart Disease Prediction and Drug Recommendation System**
+# **MediSense: Smart Disease Prediction and Drug Recommendation System**
 
 MediSense is an integrated healthcare solution that leverages Machine Learning and Deep Learning to predict diseases based on symptoms and provide data-driven drug recommendations. By utilizing Natural Language Processing (NLP), the system also analyzes patient reviews to ensure recommendations are based on real-world efficacy and user satisfaction.
 
-## Heading 2**Project Overview**
+## **Project Overview**
 
 The primary goal of MediSense is to assist healthcare professionals and patients by transforming symptom data into actionable medical insights. The system employs high-accuracy models like RoBERTa for disease classification and uses weighted average methodologies for drug suggestions.
 
-## Heading 2**Key Features**
+## **Key Features**
 
-Disease Prediction: Utilizes multiple Machine Learning and Deep Learning prototypes to predict potential health conditions from user-input symptoms.
+**Disease Prediction**: Utilizes multiple Machine Learning and Deep Learning prototypes to predict potential health conditions from user-input symptoms.
 
-Drug Recommendation: Suggests medications based on disease conditions, user ratings, and usefulness metrics.
+**Drug Recommendation**: Suggests medications based on disease conditions, user ratings, and usefulness metrics.
 
-Sentiment Analysis: Employs Natural Language Processing tools to analyze patient reviews for better recommendation accuracy.
+**Sentiment Analysis**: Employs Natural Language Processing tools to analyze patient reviews for better recommendation accuracy.
 
-User Interface: A web-based platform for easy interaction and result visualization.
+**User Interface**: A web-based platform for easy interaction and result visualization.
 
-Data-Driven Insights: Processes extensive medical datasets containing thousands of unique conditions and drug names.
+**Data-Driven Insights**: Processes extensive medical datasets containing thousands of unique conditions and drug names.
 
-## Heading 2**Technical Stack**
+## **Technical Stack**
 
 **Languages**: Python
 
@@ -32,7 +32,7 @@ Data-Driven Insights: Processes extensive medical datasets containing thousands 
 
 **Frontend**: HTML5, CSS3, JavaScript, Tailwind CSS
 
-## Heading 2**System Architecture**
+## **System Architecture**
 
 The workflow consists of three main stages:
 
@@ -42,7 +42,7 @@ Model Training: Implementing and comparing various algorithms to achieve high di
 
 Recommendation Engine: Filtering drugs based on condition-specific ratings and peer reviews to provide reliable suggestions.
 
-## Heading 2**Installation and Setup**
+## **Installation and Setup**
 
 **Clone the repository**
 
@@ -63,7 +63,7 @@ source venv/bin/activate  # On Windows use: venv\Scripts\activate
 `pip install -r requirements.txt`
 
 
-Run the application
+**Run the application**
 
 `python app.py`
 
