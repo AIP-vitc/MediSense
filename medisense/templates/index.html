@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Medical Report Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        /* Gauge Styles */
+        .gauge-container {
+            position: relative;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+        .gauge-svg { transform: rotate(-90deg); }
+        .gauge-bg { fill: none; stroke: #334155; stroke-width: 12; }
+        .gauge-cap { stroke-linecap: round; }
+
+        /* Animation Classes */
+        .fade-in { animation: fadeIn 0.5s ease-in forwards; }
+        .slide-up { animation: slideUp 0.5s ease-out forwards; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Upload Zone Hover Effect */
+        .upload-zone:hover { border-color: #3b82f6; background-color: rgba(30, 41, 59, 0.8); }
+        .upload-zone.dragover { border-color: #3b82f6; background-color: rgba(30, 41, 59, 0.9); transform: scale(1.01); }
+
+        /* Loader */
+        .loader {
+            border: 4px solid #1e293b;
+            border-radius: 50%;
+            border-top: 4px solid #3b82f6;
+            width: 50px;
+            height: 50px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Print Optimization */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+            #dashboard-view { display: block !important; }
+            #upload-view, #loading-view { display: none !important; }
+            .bg-slate-800 { background: white !important; border: 1px solid #ccc; shadow: none; }
+            .text-slate-200 { color: black !important; }
+            .text-slate-300, .text-slate-400, .text-slate-500 { color: #333 !important; }
+            /* Ensure the pre-formatted text prints correctly but uses body font */
+            #report-summary { white-space: pre-wrap !important; color: black !important; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center justify-center">
+
+    <!-- VIEW 1: UPLOAD SCREEN -->
+    <div id="upload-view" class="w-full max-w-lg mx-auto mt-10 slide-up">
+        <div class="bg-slate-800 rounded-2xl p-8 shadow-2xl border border-slate-700 text-center">
+            <div class="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-900/30 text-blue-400 border border-blue-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            
+            <h1 class="text-2xl font-bold text-white mb-2">Upload Medical Record</h1>
+            <p class="text-slate-400 text-sm mb-8">Upload a PDF or Image of your lab report to generate an AI analysis dashboard.</p>
+            
+            <div id="drop-zone" class="upload-zone border-2 border-dashed border-slate-600 rounded-xl p-10 cursor-pointer transition-all duration-300 bg-slate-900/50 mb-6">
+                <input type="file" id="file-input" class="hidden" accept=".pdf,.png,.jpg,.jpeg">
+                <div class="flex flex-col items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span class="text-sm font-medium text-slate-300">Click to upload or drag and drop</span>
+                    <span class="text-xs text-slate-500">Supported formats: PDF, PNG, JPG</span>
+                </div>
+            </div>
+
+            <button onclick="document.getElementById('file-input').click()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-lg shadow-blue-600/20">
+                Select File
+            </button>
+        </div>
+        
+        <div class="mt-6 text-center">
+            <p class="text-[10px] text-slate-600 uppercase tracking-widest">Secure HIPAA-Compliant Processing</p>
+        </div>
+    </div>
+
+    <!-- VIEW 2: LOADING SCREEN -->
+    <div id="loading-view" class="hidden w-full max-w-lg mx-auto mt-20 text-center fade-in">
+        <div class="bg-slate-800 rounded-2xl p-10 shadow-2xl border border-slate-700 flex flex-col items-center">
+            <div class="loader mb-6"></div>
+            <h2 class="text-xl font-bold text-white mb-2">Analyzing Document</h2>
+            <p class="text-slate-400 text-sm" id="loading-text">This may take a few moments...</p>
+            
+            <!-- Indeterminate Progress Bar -->
+            <div class="w-full bg-slate-700 rounded-full h-1.5 mt-8 overflow-hidden">
+                <div id="progress-bar" class="bg-blue-500 h-1.5 rounded-full w-full animate-pulse"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: DASHBOARD (Data Display) -->
+    <div id="dashboard-view" class="hidden w-full max-w-5xl mx-auto space-y-6 fade-in">
+        
+        <!-- 1. Patient Information (Top - Full Width) -->
+        <div class="bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-700">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-slate-500 text-xs font-bold uppercase tracking-widest">Patient Information</h2>
+                <button onclick="resetApp()" class="text-xs text-blue-400 hover:text-blue-300 underline no-print">Upload New Report</button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                    <p class="text-xs text-slate-500 uppercase">Full Name</p>
+                    <p class="font-semibold text-slate-200" id="pt-name">--</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 uppercase">Patient ID</p>
+                    <p class="font-semibold text-slate-200" id="pt-id">--</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 uppercase">Age / Gender</p>
+                    <p class="font-semibold text-slate-200" id="pt-age-gender">--</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 uppercase">Blood Group</p>
+                    <p class="font-semibold text-slate-200" id="pt-blood">N/A</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Doctor & Lab Information (Row) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Doctor Card -->
+            <div class="bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-700">
+                <h2 class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-4">Doctor Information</h2>
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-slate-300 font-bold border border-slate-600">
+                        DR
+                    </div>
+                    <div>
+                        <p class="font-semibold text-slate-200 text-lg" id="dr-name">--</p>
+                        <p class="text-slate-400 text-sm" id="dr-spec">--</p>
+                        <p class="text-xs text-slate-500 mt-2">Authorized Personnel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lab Info Card -->
+            <div class="bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-700">
+                <h2 class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-4">Lab Information</h2>
+                <div class="flex items-start gap-4">
+                    <div class="bg-blue-500/20 p-3 rounded-lg text-blue-400 border border-blue-500/30">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-slate-200 text-lg" id="lab-name">--</p>
+                        <p class="text-slate-400 text-xs" id="lab-address">--</p>
+                        <div class="flex gap-2 mt-2">
+                            <span class="bg-green-900/30 text-green-400 text-[9px] font-bold px-1.5 py-0.5 rounded border border-green-800 uppercase">Accredited</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Medical Summary (UPDATED STYLE) -->
+        <div class="bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-700">
+            <h2 class="text-white font-bold mb-3 flex items-center gap-2 text-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+                Medical Summary
+            </h2>
+            <!-- 
+                 UPDATED: Removed 'font-mono' so it inherits the body font (Inter).
+                 Kept 'whitespace-pre-wrap' to preserve line breaks and spacing.
+            -->
+            <div class="whitespace-pre-wrap text-xs md:text-sm text-slate-300 leading-relaxed overflow-x-auto bg-slate-900/50 p-4 rounded-xl border border-slate-700/50" id="report-summary">
+                --
+            </div>
+        </div>
+
+        <!-- 4. Test Results Section -->
+        <div class="bg-slate-800 rounded-2xl shadow-sm border border-slate-700 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-700 bg-slate-900/50">
+                <h2 class="text-white font-bold">Comprehensive Analysis</h2>
+            </div>
+            
+            <div class="p-6">
+                <div id="test-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Gauges will be injected here by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Print Button Section -->
+        <div class="flex justify-center pt-4 pb-8 no-print">
+            <button onclick="window.print()" class="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-500 transition flex items-center gap-3 text-sm font-bold shadow-lg shadow-blue-600/20 active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Generate Print Report
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        const BACKEND_URL = 'http://localhost:5000/analyze'; 
+        
+        // --- 2. UPLOAD & ANIMATION LOGIC ---
+        
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+
+        // Drag & Drop visual feedback
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+
+        // Handle File Drop
+        dropZone.addEventListener('drop', handleDrop, false);
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // Handle File Select
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                uploadFile(files[0]);
+            }
+        }
+
+        async function uploadFile(file) {
+            // UI Switch: Upload -> Loading
+            document.getElementById('upload-view').classList.add('hidden');
+            document.getElementById('loading-view').classList.remove('hidden');
+
+            try {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // CONNECT TO BACKEND
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    body: formData
+                }); 
+
+                if (!response.ok) throw new Error("Backend error");
+                
+                const data = await response.json();
+                renderDashboard(data); 
+
+            } catch (error) {
+                console.error("Backend Error:", error);
+                alert("Could not analyze file. Is backend.py running?");
+                resetApp();
+            }
+        }
+
+        function resetApp() {
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('loading-view').classList.add('hidden');
+            document.getElementById('upload-view').classList.remove('hidden');
+        }
+
+        // --- 3. DASHBOARD RENDERING LOGIC ---
+
+        function renderDashboard(data) {
+            console.log("Rendering data:", data);
+
+            // 1. Patient Metadata
+            const pt = data.patient_metadata || {};
+            document.getElementById('pt-name').textContent = pt.name || "--";
+            document.getElementById('pt-id').textContent = pt.patient_id || "--";
+            document.getElementById('pt-age-gender').textContent = (pt.age || "?") + " / " + (pt.gender || "?");
+            
+            // 2. Doctor Info
+            const dr = data.authorized_personnel || {};
+            document.getElementById('dr-name').textContent = dr.primary_doctor || "Unknown Doctor";
+            document.getElementById('dr-spec').textContent = dr.specialization || "--";
+
+            // 3. Lab Info
+            const lab = data.laboratory_info || {};
+            document.getElementById('lab-name').textContent = lab.lab_name || "--";
+            document.getElementById('lab-address').textContent = lab.lab_address || "--";
+
+            // 4. Summary: Now reading from backend 'summary' variable
+            document.getElementById('report-summary').textContent = data.summary || "No summary available.";
+
+            // 5. Generate Gauges (Grid)
+            const grid = document.getElementById('test-grid');
+            if (data.test_results && Array.isArray(data.test_results)) {
+                grid.innerHTML = data.test_results.map(test => createGauge(test)).join('');
+            } else {
+                grid.innerHTML = "<p class='text-slate-500'>No test results found.</p>";
+            }
+
+            // UI Switch: Loading -> Dashboard
+            setTimeout(() => {
+                document.getElementById('loading-view').classList.add('hidden');
+                document.getElementById('dashboard-view').classList.remove('hidden');
+            }, 500);
+        }
+
+        function getStatus(test) {
+            // Check explicit status string from backend
+            if (test.status) {
+                const s = test.status.toLowerCase();
+                if (s === 'normal') return { label: 'Normal', color: '#10b981', bg: 'bg-green-900/40', text: 'text-green-400' };
+                if (s === 'high') return { label: 'High', color: '#ef4444', bg: 'bg-red-900/40', text: 'text-red-400' };
+                if (s === 'low') return { label: 'Low', color: '#ef4444', bg: 'bg-red-900/40', text: 'text-red-400' };
+            }
+            return { label: 'Unknown', color: '#64748b', bg: 'bg-slate-700', text: 'text-slate-300' };
+        }
+
+        function createGauge(test) {
+            const status = getStatus(test);
+            const radius = 40;
+            const circumference = 2 * Math.PI * radius;
+            
+            // Use values enriched by Backend or Fallback to defaults
+            const min = test.min !== undefined ? test.min : 0;
+            const max = test.max !== undefined ? test.max : 100;
+            const val = parseFloat(test.value) || 0;
+            
+            const normalizedValue = Math.min(Math.max((val - min) / (max - min), 0), 1);
+            const totalArc = 0.75; 
+
+            // Format range text
+            let rangeText = "";
+            if (test.normalRange) {
+                rangeText = `Ref: ${test.normalRange[0]} - ${test.normalRange[1]}`;
+            }
+
+            return `
+                <div class="flex flex-col items-center text-center p-4 bg-slate-900/40 rounded-xl border border-slate-700/50">
+                    <div class="gauge-container">
+                        <svg class="gauge-svg" viewBox="0 0 100 100">
+                            <circle class="gauge-bg" cx="50" cy="50" r="${radius}" 
+                                style="stroke-dasharray: ${circumference * totalArc} ${circumference}"
+                                style="stroke-dashoffset: 0"
+                            />
+                            <circle class="gauge-cap" cx="50" cy="50" r="${radius}" 
+                                fill="none" stroke="${status.color}" stroke-width="12"
+                                style="stroke-dasharray: ${circumference * totalArc} ${circumference};
+                                       stroke-dashoffset: ${circumference * (totalArc * (1 - normalizedValue))}"
+                            />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pt-2">
+                            <span class="text-xl font-bold text-white">${val}</span>
+                            <span class="text-[10px] text-slate-500 font-medium">${test.unit || ''}</span>
+                        </div>
+                    </div>
+                    <h3 class="mt-4 font-semibold text-slate-300 text-sm">${test.test_name || test.name}</h3>
+                    <div class="mt-2">
+                        <span class="status-badge ${status.bg} ${status.text}">${status.label}</span>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2 italic">${rangeText}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
