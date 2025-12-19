@@ -1,4 +1,4 @@
-**MediSense: Smart Disease Prediction and Drug Recommendation System**
+# Heading 1**MediSense: Smart Disease Prediction and Drug Recommendation System**
 
 MediSense is an integrated healthcare solution that leverages Machine Learning and Deep Learning to predict diseases based on symptoms and provide data-driven drug recommendations. By utilizing Natural Language Processing (NLP), the system also analyzes patient reviews to ensure recommendations are based on real-world efficacy and user satisfaction.
 
