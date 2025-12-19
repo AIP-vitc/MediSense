@@ -49,7 +49,7 @@ The primary mission of MediSense is to empower patients by making their health d
 **Clone the repository**
 
 ```
-git clone [https://github.com/AIP-vitc/MediSense.git](https://github.com/AIP-vitc/MediSense.git)
+git clone https://github.com/AIP-vitc/MediSense.git
 cd MediSense
 ```
 
