@@ -1,32 +1,34 @@
 # **MediSense: Smart Disease Prediction and Drug Recommendation System**
 
-MediSense is an integrated healthcare solution that leverages Machine Learning and Deep Learning to predict diseases based on symptoms and provide data-driven drug recommendations. By utilizing Natural Language Processing (NLP), the system also analyzes patient reviews to ensure recommendations are based on real-world efficacy and user satisfaction.
+MediSense is a health analysis platform designed to bridge the gap between complex medical terminology and patient understanding. By leveraging advanced Natural Language Processing (NLP) and Optical Character Recognition (OCR), the system transforms technical medical reports and diagnostic data into clear, straightforward summaries tailored for individuals without a healthcare background.
 
 ## **Project Overview**
 
-The primary goal of MediSense is to assist healthcare professionals and patients by transforming symptom data into actionable medical insights. The system employs high-accuracy models like RoBERTa for disease classification and uses weighted average methodologies for drug suggestions.
+The primary mission of MediSense is to empower patients by making their health data accessible. Medical reports often contain dense jargon that can be confusing or alarming for patients. This system utilizes AI models to extract key information from uploaded documents and rephrase it into simple language, ensuring that users can easily understand their health status and diagnostic results.
 
 ## **Key Features**
 
-**Disease Prediction**: Utilizes multiple Machine Learning and Deep Learning prototypes to predict potential health conditions from user-input symptoms.
+**Patient-Centric Summarization**: Automatically simplifies technical medical reports into clear, easy-to-understand summaries.
 
-**Drug Recommendation**: Suggests medications based on disease conditions, user ratings, and usefulness metrics.
+**Document Processing (OCR)**: Integrates Google's OCR to extract text from scanned medical images and PDF documents.
 
-**Sentiment Analysis**: Employs Natural Language Processing tools to analyze patient reviews for better recommendation accuracy.
+**AI-Driven Insights**: Utilizes ML Models to analyze medical data and provide personalized health explanations.
 
-**User Interface**: A web-based platform for easy interaction and result visualization.
+**User-Friendly Interface:** A clean, responsive web platform designed for easy document uploads and result visualization.
 
-**Data-Driven Insights**: Processes extensive medical datasets containing thousands of unique conditions and drug names.
+**Local Deployment**: Supports local deployment for privacy and agile testing.
 
 ## **Technical Stack**
 
 **Languages**: Python
 
-**Machine Learning**: Scikit-learn, XGBoost, Random Forest
+**OCR**: Google OCR, Qwen3-VL
 
-**Deep Learning**: PyTorch, TensorFlow, RoBERTa
+**Machine Learning**: Scikit-learn, Random Forest
 
-**NLP**: NLTK, VADER, Sentiment Analysis
+**Deep Learning**: PyTorch
+
+**NLP**: NLTK, VADER
 
 **Backend**: Flask / FastAPI
 
@@ -34,13 +36,13 @@ The primary goal of MediSense is to assist healthcare professionals and patients
 
 ## **System Architecture**
 
-The workflow consists of three main stages:
+**The workflow consists of three main stages:**
 
-Data Preprocessing: Cleaning medical datasets, handling missing values, and tokenizing text data.
+**Data Acquisition**: Users upload medical reports in image or PDF format.
 
-Model Training: Implementing and comparing various algorithms to achieve high diagnostic accuracy.
+**Information Extraction**: The system uses OCR to digitize the text and preprocesses it for the AI model.
 
-Recommendation Engine: Filtering drugs based on condition-specific ratings and peer reviews to provide reliable suggestions.
+**Simplification Engine**: The AI processes the technical text and generates a summary that focuses on clarity and accessibility for the patient.
 
 ## **Installation and Setup**
 
@@ -67,9 +69,9 @@ source venv/bin/activate  # On Windows use: venv\Scripts\activate
 
 `python app.py`
 
-## Heading 2**Authors**
+## **Authors**
 
-1.Kumar Shaurya
-2.Rajarshi Saha
-3.Vedant Jadhav
-4.Tirth Mangukiya
+Kumar Shaurya
+Rajarshi Saha
+Vedant Jadhav
+Tirth Mangukiya
