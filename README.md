@@ -49,7 +49,7 @@ The primary mission of MediSense is to empower patients by making their health d
 **Clone the repository**
 
 ```
-git clone [https://github.com/AIP-vitc/MediSense.git](https://github.com/AIP-vitc/MediSense.git)
+git clone https://github.com/AIP-vitc/MediSense.git
 cd MediSense
 ```
 
@@ -57,7 +57,7 @@ cd MediSense
 
 ```
 python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
+venv\Scripts\activate #On Linux: source venv/bin/activate
 ```
 
 **Install dependencies**
@@ -75,4 +75,5 @@ Kumar Shaurya,
 Rajarshi Saha,
 Vedant Jadhav,
 Tirth Mangukiya
+
 
