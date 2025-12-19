@@ -71,7 +71,7 @@ source venv/bin/activate  # On Windows use: venv\Scripts\activate
 
 ## **Authors**
 
-Kumar Shaurya
-Rajarshi Saha
-Vedant Jadhav
+Kumar Shaurya,
+Rajarshi Saha,
+Vedant Jadhav,
 Tirth Mangukiya
