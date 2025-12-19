@@ -20,19 +20,19 @@ Data-Driven Insights: Processes extensive medical datasets containing thousands 
 
 ## Heading 2**Technical Stack**
 
-Languages: Python
+**Languages**: Python
 
-Machine Learning: Scikit-learn, XGBoost, Random Forest
+**Machine Learning**: Scikit-learn, XGBoost, Random Forest
 
-Deep Learning: PyTorch, TensorFlow, RoBERTa
+**Deep Learning**: PyTorch, TensorFlow, RoBERTa
 
-NLP: NLTK, VADER, Sentiment Analysis
+**NLP**: NLTK, VADER, Sentiment Analysis
 
-Backend: Flask / FastAPI
+**Backend**: Flask / FastAPI
 
-Frontend: HTML5, CSS3, JavaScript, Tailwind CSS
+**Frontend**: HTML5, CSS3, JavaScript, Tailwind CSS
 
-System Architecture
+## Heading 2**System Architecture**
 
 The workflow consists of three main stages:
 
@@ -44,19 +44,21 @@ Recommendation Engine: Filtering drugs based on condition-specific ratings and p
 
 ## Heading 2**Installation and Setup**
 
-Clone the repository
+**Clone the repository**
 
+```
 git clone [https://github.com/AIP-vitc/MediSense.git](https://github.com/AIP-vitc/MediSense.git)
 cd MediSense
+```
 
+**Create a virtual environment**
 
-Create a virtual environment
+```
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+```
 
-```python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate```
-
-
-Install dependencies
+**Install dependencies**
 
 `pip install -r requirements.txt`
 
@@ -71,6 +73,3 @@ Run the application
 2.Rajarshi Saha
 3.Vedant Jadhav
 4.Tirth Mangukiya
-License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
