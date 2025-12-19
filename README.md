@@ -1,4 +1,4 @@
-# **MediSense: Smart Disease Prediction and Drug Recommendation System**
+# **MediSense: Medical report Analyzer**
 
 MediSense is a health analysis platform designed to bridge the gap between complex medical terminology and patient understanding. By leveraging advanced Natural Language Processing (NLP) and Optical Character Recognition (OCR), the system transforms technical medical reports and diagnostic data into clear, straightforward summaries tailored for individuals without a healthcare background.
 
@@ -75,3 +75,4 @@ Kumar Shaurya,
 Rajarshi Saha,
 Vedant Jadhav,
 Tirth Mangukiya
+
